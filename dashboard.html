@@ -8,7 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@100;200;300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="app.css?v=1" />
+  <link rel="stylesheet" href="app.css?v=2" />
+  <script>(function(){try{if(localStorage.getItem('ccapp-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 </head>
 <body data-nav="dashboard">
   <div class="shell">
@@ -62,11 +63,11 @@
                 <span class="kv-v"><span id="api-key">••••••••••••••••••••••••</span><button class="kv-copy" onclick="var k=document.getElementById('api-key');k.textContent=k.textContent[0]==='•'?'cc_test_4f8a2b9c1d7e3f6a0b5c':'••••••••••••••••••••••••'">Reveal</button><button class="kv-copy" onclick="ccCopy('cc_test_4f8a2b9c1d7e3f6a0b5c')">Copy</button></span>
               </div>
             </div>
-            <div style="margin-top:16px;"><button class="btn btn-primary btn-sm" onclick="ccMock('Mockup: key generation simulated')">Generate new key</button></div>
+            <div style="margin-top:16px;"><a class="btn btn-primary btn-sm" href="api-keys.html">Generate new key</a></div>
           </div>
 
           <div class="card accent">
-            <div class="card-head"><h3>Live benchmarking</h3><a class="more" href="benchmarking.html">Full view →</a></div>
+            <div class="card-head"><h3>Network status</h3><a class="more" href="benchmarking.html">Full view →</a></div>
             <table class="table">
               <thead><tr><th>Source</th><th>Time</th><th>Precision</th></tr></thead>
               <tbody>
@@ -93,7 +94,7 @@
             <div class="stat-v" style="font-size:20px;">3</div>
           </div>
           <div class="card">
-            <div class="card-head"><h3>Timestamp API</h3><a class="more" href="timestamp.html">Open →</a></div>
+            <div class="card-head"><h3>Timestamp</h3><a class="more" href="timestamp.html">Open →</a></div>
             <p style="font-size:13px;color:var(--fg-2);margin-bottom:14px;">Verified timestamps for UTC, GPS, TAI, ISO 8601, RFC 3339.</p>
             <div class="stat-k">Requests · 24h</div>
             <div class="stat-v" style="font-size:20px;">418</div>
@@ -116,6 +117,6 @@
       </div>
     </div>
   </div>
-  <script src="app.js?v=1"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>

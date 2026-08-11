@@ -8,9 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@100;200;300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../app.css?v=1" />
+  <link rel="stylesheet" href="../app.css?v=2" />
+  <script>(function(){try{if(localStorage.getItem('ccapp-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 </head>
-<body data-nav="docs" data-docs>
+<body data-nav="mcp" data-docs>
   <div class="shell">
     <aside class="sidebar" id="sidebar"></aside>
     <div class="main">
@@ -92,7 +93,7 @@
             <p>Open a new session, run <span class="mono-inline">/mcp</span> (you should see <span class="mono-inline">clockchain</span> with all 31 tools), then ask: <i>"use clockchain to get the current consensus time."</i></p>
 
             <h2>Health &amp; status</h2>
-            <p>Liveness: <span class="mono-inline">GET mcp.clockchain.network/health</span>, no auth. Live status and the capability catalog sit in the app's <a href="../benchmarking.html" style="color:var(--accent);">Live Benchmarking</a> view.</p>
+            <p>Liveness: <span class="mono-inline">GET mcp.clockchain.network/health</span>, no auth. Live status and the capability catalog sit in the app's <a href="../benchmarking.html" style="color:var(--accent);">Network Status</a> view.</p>
             <p style="font-size:12.5px;color:var(--fg-3);">Presently recorded on a single-validator testnet: the event hash, on-chain anchor, and consensus timestamp are real and independently verifiable. Multi-validator supermajority attestation activates at mainnet.</p>
 
             <div class="docs-prevnext">
@@ -105,6 +106,6 @@
       </div>
     </div>
   </div>
-  <script src="../app.js?v=1"></script>
+  <script src="../app.js?v=2"></script>
 </body>
 </html>

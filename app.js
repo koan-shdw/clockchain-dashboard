@@ -26,10 +26,14 @@
     { group: 'Services', items: [
       { id: 'logging', label: 'Logging', href: 'logging.html', icon: '<path d="M4 6h16M4 12h16M4 18h10"/>' },
       { id: 'contracts', label: 'Smart Contracts', href: 'contracts.html', icon: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>' },
-      { id: 'timestamp', label: 'Timestamp API', href: 'timestamp.html', icon: '<path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 5l-2 14"/>' }
+      { id: 'timestamp', label: 'Timestamp', href: 'timestamp.html', icon: '<path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 5l-2 14"/>' }
+    ]},
+    { group: 'Connections', items: [
+      { id: 'apikeys', label: 'API', href: 'api-keys.html', icon: '<circle cx="9" cy="15" r="3.5"/><path d="M11.5 12.5 20 4M16 8l3 3"/>' },
+      { id: 'mcp', label: 'MCP', href: 'docs/mcp.html', icon: '<path d="M9 7V2M15 7V2M6 7h12v4a6 6 0 0 1-12 0z"/><path d="M12 17v5"/>' }
     ]},
     { group: 'Network', items: [
-      { id: 'benchmarking', label: 'Live Benchmarking', href: 'benchmarking.html', icon: '<path d="M4 19V10M10 19V5M16 19v-7M21 19H3"/>' }
+      { id: 'benchmarking', label: 'Network Status', href: 'benchmarking.html', icon: '<path d="M4 19V10M10 19V5M16 19v-7M21 19H3"/>' }
     ]},
     { group: 'Developers', items: [
       { id: 'docs', label: 'Docs', href: 'docs/index.html', icon: '<path d="M5 4h9l5 5v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M14 4v5h5"/>', pub: true }
@@ -80,9 +84,25 @@
       '<div class="tb-title">' + title + ' <span class="net-badge">Testnet</span></div>'
       + '<div class="tb-right">'
       + '<nav class="tb-mobile-nav"><select onchange="location.href=this.value" aria-label="Navigate">' + opts + '</select></nav>'
-      + '<span class="tb-clock"><span class="live-dot"></span><span id="tb-time">--:--:--</span><span class="tb-h">·</span><span id="tb-height">#—</span></span>'
+      + '<span class="tb-stat"><span class="live-dot"></span><span class="tb-label">Clockchain Time</span><span id="tb-time">--:--:--</span></span>'
+      + '<span class="tb-stat"><span class="tb-label">Clockchain Block Height</span><span id="tb-height">#—</span></span>'
+      + '<button class="tb-theme" id="tb-theme" type="button" aria-label="Toggle light mode" onclick="ccTheme()"></button>'
       + '</div>';
   }
+
+  /* ---- theme: dark default, light via [data-theme="light"] on <html> ---- */
+  var SUN = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.5 4.5l2 2M17.5 17.5l2 2M19.5 4.5l-2 2M6.5 17.5l-2 2"/></svg>';
+  var MOON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 13A8.5 8.5 0 0 1 11 3a8.5 8.5 0 1 0 10 10z"/></svg>';
+  function paintTheme(){
+    var b = document.getElementById('tb-theme');
+    if(b) b.innerHTML = document.documentElement.getAttribute('data-theme') === 'light' ? MOON : SUN;
+  }
+  window.ccTheme = function(){
+    var r = document.documentElement, light = r.getAttribute('data-theme') === 'light';
+    if(light) r.removeAttribute('data-theme'); else r.setAttribute('data-theme', 'light');
+    try{ localStorage.setItem('ccapp-theme', light ? 'dark' : 'light'); }catch(e){}
+    paintTheme();
+  };
 
   /* ---- live values: any [data-live] element updates each second ----
      data-live: time | height | hash | date */
@@ -132,6 +152,7 @@
 
   renderSidebar();
   renderTopbar();
+  paintTheme();
   tick();
   setInterval(tick, 1000);
 })();

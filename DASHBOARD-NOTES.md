@@ -1,15 +1,13 @@
 # Dashboard Notes — round 1 (from website notes, 2026-08-11)
 
-Work happens in this repo, separate from the site. Nothing below is built yet.
+Work happens in this repo, separate from the site. Round-1 build shipped 2026-08-11, spec in SPEC-ROUND-1.md.
 
-1. **Connections section**
-   - API key generate + revoke cards
-   - MCP section
-2. **Top right corner**: "Clockchain Time" and "Clockchain Block Height" as titles next to the numbers
-3. Remove "API" from "Timestamp API"
-4. Replace "Live Benchmarking" with **"Network Status"**
-5. **Opening dashboard**: rethink what info belongs on it — Jeff can help with this
-6. Add **light mode**
+1. **Connections section** — DONE. Sidebar group with API (new api-keys.html: table, reveal/copy, mock generate + revoke) and MCP (links to docs/mcp.html, highlights in sidebar).
+2. **Top right corner** titles next to the numbers — DONE ("Clockchain Time" / "Clockchain Block Height" labels, hidden under 980px).
+3. Remove "API" from "Timestamp API" — DONE in sidebar, page title, dashboard card. Docs keep "Timestamp API reference" (it is the API's name).
+4. "Live Benchmarking" → **"Network Status"** — DONE (labels and titles; file stays benchmarking.html so links hold).
+5. **Opening dashboard**: rethink what info belongs on it — **OPEN, waiting on Jeff.**
+6. **Light mode** — DONE. Topbar sun/moon toggle, dark default, remembered per browser.
 
 ## Repo facts
 

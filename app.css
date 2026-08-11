@@ -29,6 +29,25 @@
   color-scheme:dark;
 }
 
+/* Light mode: applied via [data-theme="light"] on <html>, dark stays default */
+:root[data-theme="light"]{
+  --accent:#0a8a0a;
+  --accent-soft:rgba(10,138,10,0.09);
+  --accent-line:rgba(10,138,10,0.34);
+  --bg:#f4f6f4;
+  --bg-alt:#eef1ee;
+  --surface:#ffffff;
+  --surface-2:#f4f6f4;
+  --ink:#ffffff;
+  --fg:#151815;
+  --fg-2:#4c544c;
+  --fg-3:#79817a;
+  --line:rgba(0,0,0,0.09);
+  --line-2:rgba(0,0,0,0.17);
+  --shadow:0 1px 2px rgba(0,0,0,.06), 0 24px 60px -30px rgba(0,0,0,.18);
+  color-scheme:light;
+}
+
 html{scroll-behavior:smooth;}
 body{
   font-family:var(--f-body);background:var(--bg);color:var(--fg);
@@ -119,13 +138,25 @@ h1,h2,h3,h4{font-family:var(--f-display);font-weight:500;letter-spacing:-0.015em
 }
 .tb-title{font-family:var(--f-display);font-size:15px;font-weight:500;display:flex;align-items:center;gap:12px;}
 .tb-right{display:flex;align-items:center;gap:14px;}
-.tb-clock{
+.tb-stat{
   display:inline-flex;align-items:center;gap:9px;
   font-family:var(--f-mono);font-size:12.5px;color:var(--fg-2);
   background:var(--surface);border:1px solid var(--line);border-radius:999px;
   padding:7px 14px;font-variant-numeric:tabular-nums;
 }
-.tb-clock .tb-h{color:var(--fg-3);}
+.tb-stat .tb-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-3);white-space:nowrap;}
+@media(max-width:980px){.tb-stat .tb-label{display:none;}}
+.tb-theme{
+  width:32px;height:32px;flex:none;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:9px;color:var(--fg-2);transition:color .16s ease,border-color .16s ease;
+}
+.tb-theme:hover{color:var(--accent);border-color:var(--accent-line);}
+.tb-theme svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;}
+.status-pill.is-revoked{color:var(--fg-3);background:rgba(128,128,128,.14);}
+.field select{
+  width:100%;background:var(--surface);border:1px solid var(--line-2);border-radius:9px;
+  padding:10px 12px;color:var(--fg);font:inherit;
+}
 
 /* ===== Content ===== */
 .content{padding:30px 28px 56px;max-width:1120px;width:100%;}
