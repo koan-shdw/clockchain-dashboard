@@ -1,6 +1,7 @@
 # Dashboard Notes — round 1 (from website notes, 2026-08-11)
 
 Work happens in this repo, separate from the site. Round-1 build shipped 2026-08-11, spec in SPEC-ROUND-1.md.
+Round 2 (Jeff Ravetto's Log Creation form redesign, team-approved) built 2026-08-27, spec in SPEC-ROUND-2.md. Round 3 = encourage-use items, parked in that spec.
 
 1. **Connections section** — DONE. Sidebar group with API (new api-keys.html: table, reveal/copy, mock generate + revoke) and MCP (links to docs/mcp.html, highlights in sidebar).
 2. **Top right corner** titles next to the numbers — DONE ("Clockchain Time" / "Clockchain Block Height" labels, hidden under 980px).
