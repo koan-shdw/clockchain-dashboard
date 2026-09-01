@@ -31,7 +31,7 @@
         </div>
 
         <div class="section card">
-          <div class="card-head"><h3>Create log</h3></div>
+          <div class="card-head"><h3 id="cl-title">Create log</h3></div>
 
           <!-- form state -->
           <div id="cl-form">
@@ -42,10 +42,11 @@
                 <span class="cl-cap">Only the fingerprint goes on chain. The content itself is never stored.</span>
               </div>
 
+              <p style="font-size:13px;color:var(--fg-2);margin-top:2px;">What would you like to log?</p>
               <div class="tabs">
                 <button class="tabbtn active" type="button" onclick="clTab('hash','cl-p-hash',this)">I have a hash</button>
-                <button class="tabbtn" type="button" onclick="clTab('text','cl-p-text',this)">Hash text for me</button>
-                <button class="tabbtn" type="button" onclick="clTab('file','cl-p-file',this)">Hash a file for me</button>
+                <button class="tabbtn" type="button" onclick="clTab('text','cl-p-text',this)">Enter plain text/data</button>
+                <button class="tabbtn" type="button" onclick="clTab('file','cl-p-file',this)">Get file</button>
               </div>
 
               <div class="tabpane" id="cl-p-hash">
@@ -116,22 +117,21 @@
 
           <!-- preview state -->
           <div id="cl-preview" hidden>
-            <div class="cl-rec-label">Preview · this is what goes on the Clockchain</div>
+            <p style="font-size:13px;color:var(--fg-2);margin-bottom:16px;">Your data will show on the Clockchain exactly as shown below.</p>
 
-            <div class="cl-rec-label">Hashed</div>
+            <div class="cl-rec-label">Hash</div>
             <div class="cl-hashrow" style="margin-top:0;">
               <span class="cl-hash" id="pv-hash">—</span>
               <span style="flex:none;color:var(--fg-3);font-size:11px;" id="pv-type">SHA-256</span>
             </div>
 
-            <div class="cl-rec-label">Public</div>
-            <div class="kv" id="pv-public"></div>
+            <div class="kv" id="pv-public" style="margin-top:18px;"></div>
 
             <div class="cl-rec-label">Anchor</div>
             <table class="table">
               <tbody>
                 <tr><td>Block</td><td class="mono" data-live="height">#—</td><td style="color:var(--fg-3);">estimated at submission</td></tr>
-                <tr><td>Consensus time</td><td class="mono"><span data-live="time">—</span> UTC</td><td style="color:var(--fg-3);">estimated at submission</td></tr>
+                <tr><td>Consensus time</td><td class="mono"><span data-live="time">—</span> Clockchain Time</td><td style="color:var(--fg-3);">estimated at submission</td></tr>
               </tbody>
             </table>
 
@@ -263,10 +263,12 @@
       }
       document.getElementById('pv-cost').textContent =
         'This uses 1 log. ' + (st.remaining - 1).toLocaleString() + ' remain after.';
+      document.getElementById('cl-title').textContent = 'Preview';
       document.getElementById('cl-form').hidden = true;
       document.getElementById('cl-preview').hidden = false;
     };
     window.clBack = function(){
+      document.getElementById('cl-title').textContent = 'Create log';
       document.getElementById('cl-preview').hidden = true;
       document.getElementById('cl-form').hidden = false;
     };
