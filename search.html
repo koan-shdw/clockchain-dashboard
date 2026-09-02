@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search &amp; Verify · Clockchain App</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@100;200;300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="app.css?v=4" />
+  <script>(function(){try{if(localStorage.getItem('ccapp-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
+</head>
+<body data-nav="search">
+  <div class="shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main">
+      <header class="topbar" id="topbar" data-title="Search &amp; Verify"></header>
+      <div class="content">
+
+        <div class="page-head">
+          <h1>Search &amp; Verify</h1>
+          <p>To verify information on the Clockchain, search below. Enter a block height, hash, asset ID, or user ID to narrow the search. You can also enter a quicklink you've been given.</p>
+        </div>
+
+        <div class="card">
+          <div class="search-big">
+            <input type="text" id="sv-q" placeholder="0x…, #block, asset ID, or CC-XXXX-XXXX" autocomplete="off" spellcheck="false"
+              onkeydown="if(event.key==='Enter')svRun()" />
+            <button class="btn btn-primary" type="button" onclick="svRun()">Search Clockchain</button>
+          </div>
+          <div style="text-align:right;margin-top:10px;"><a class="more" href="advanced-search.html">Advanced search →</a></div>
+        </div>
+
+        <div class="section card accent" id="sv-receipt" hidden>
+          <div class="card-head"><h3 id="rc-type">Log</h3><span class="status-pill" id="rc-status">Verified</span></div>
+          <div class="cl-rec-label">Hash</div>
+          <div class="cl-hashrow" style="margin-top:0;" id="rc-hashrow">
+            <span class="cl-hash" id="rc-hash">—</span>
+            <span style="flex:none;color:var(--fg-3);font-size:11px;">SHA-256</span>
+          </div>
+          <div class="kv" id="rc-public" style="margin-top:18px;"></div>
+          <div class="cl-rec-label">Anchor</div>
+          <table class="table">
+            <tbody>
+              <tr><td>Block</td><td class="mono" id="rc-block">—</td><td></td></tr>
+              <tr><td>Consensus time</td><td class="mono" id="rc-time">—</td><td></td></tr>
+              <tr><td>Reference key</td><td class="mono" id="rc-key">—</td>
+                <td><button class="kv-copy" type="button" onclick="svCopyLink()">Copy link</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section card">
+          <div class="card-head"><h3>Results</h3></div>
+          <div class="filters">
+            <span class="flt-label">Filters</span>
+            <label><input type="checkbox" data-cat="log" checked onchange="svRun()" /> Logging</label>
+            <label><input type="checkbox" data-cat="api" checked onchange="svRun()" /> Timestamp/APIs</label>
+            <label><input type="checkbox" data-cat="contract" onchange="svRun()" /> Smart Contracts</label>
+          </div>
+          <div class="filters">
+            <span class="flt-label">Date</span>
+            <label><input type="radio" name="sv-date" checked /> Today</label>
+            <label><input type="radio" name="sv-date" /> Last 30 days</label>
+            <label><input type="radio" name="sv-date" /> All time</label>
+            <label><input type="radio" name="sv-date" /> Custom</label>
+            <input class="date-in" type="text" value="25-Aug-2026" aria-label="From" />
+            <input class="date-in" type="text" value="25-Aug-2026" aria-label="To" />
+          </div>
+          <table class="table">
+            <thead><tr><th>Type</th><th>Detail</th><th>Block</th><th>Status</th><th>When</th></tr></thead>
+            <tbody id="sv-rows"></tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script src="app.js?v=3"></script>
+  <script src="search.js?v=1"></script>
+  <script>
+  (function(){
+    var current = null;
+    window.svRun = function(){
+      var q = document.getElementById('sv-q').value;
+      var hit = CCSearch.byKey(q);
+      var panel = document.getElementById('sv-receipt');
+      if(hit){
+        current = hit;
+        document.getElementById('rc-type').textContent = hit.type + (hit.name ? ' · ' + hit.name : '');
+        document.getElementById('rc-status').textContent = hit.status;
+        document.getElementById('rc-hashrow').style.display = hit.hash ? '' : 'none';
+        document.getElementById('rc-hash').textContent = hit.hash || '';
+        var box = document.getElementById('rc-public'); box.innerHTML = '';
+        var fields = hit.detail
+          ? [['Detail', hit.detail]]
+          : [['Asset Name', hit.name], ['Asset ID', hit.assetId], ['Version #', hit.ver]].filter(function(p){ return p[1]; });
+        fields.forEach(function(p){
+          var r = document.createElement('div'); r.className = 'kv-row';
+          r.innerHTML = '<span class="kv-k"></span><span class="kv-v"><span></span></span>';
+          r.querySelector('.kv-k').textContent = p[0];
+          r.querySelector('.kv-v span').textContent = p[1];
+          box.appendChild(r);
+        });
+        document.getElementById('rc-block').textContent = hit.block ? '#' + hit.block.toLocaleString() : 'scheduled';
+        document.getElementById('rc-time').textContent = hit.anchored;
+        document.getElementById('rc-key').textContent = hit.key;
+        panel.hidden = false;
+        CCSearch.render([hit], document.getElementById('sv-rows'));
+        return;
+      }
+      current = null;
+      panel.hidden = true;
+      CCSearch.render(CCSearch.basic(q), document.getElementById('sv-rows'));
+    };
+    window.svCopyLink = function(){
+      if(!current) return;
+      var url = location.origin + location.pathname + '?q=' + encodeURIComponent(current.key);
+      navigator.clipboard.writeText(url).then(function(){ ccToast('Quicklink copied'); })
+        .catch(function(){ ccToast('Copy failed'); });
+    };
+    var q = new URLSearchParams(location.search).get('q');
+    if(q) document.getElementById('sv-q').value = q;
+    svRun();
+  })();
+  </script>
+</body>
+</html>

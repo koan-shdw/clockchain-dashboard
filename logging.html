@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@100;200;300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="app.css?v=3" />
+  <link rel="stylesheet" href="app.css?v=4" />
   <script>(function(){try{if(localStorage.getItem('ccapp-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 </head>
 <body data-nav="logging">
@@ -132,6 +132,7 @@
               <tbody>
                 <tr><td>Block</td><td class="mono" data-live="height">#—</td><td style="color:var(--fg-3);">estimated at submission</td></tr>
                 <tr><td>Consensus time</td><td class="mono"><span data-live="time">—</span> Clockchain Time</td><td style="color:var(--fg-3);">estimated at submission</td></tr>
+                <tr><td>Reference key</td><td class="mono">CC-XXXX-XXXX</td><td style="color:var(--fg-3);">issued at submission</td></tr>
               </tbody>
             </table>
 
@@ -145,12 +146,12 @@
         </div>
 
         <div class="section card">
-          <div class="card-head"><h3>Search &amp; verify</h3></div>
+          <div class="card-head"><h3>Search &amp; verify</h3><a class="more" href="search.html">Open →</a></div>
           <div class="field">
-            <label>Hash, label, or block</label>
-            <input type="text" placeholder="0x…, label, or #block" />
+            <label>Hash, quicklink, or block</label>
+            <input type="text" id="cl-search" placeholder="0x…, CC-XXXX-XXXX, or #block" onkeydown="if(event.key==='Enter')clSearch()" />
           </div>
-          <button class="btn btn-outline" onclick="ccMock('Mockup: search simulated')">Search history</button>
+          <button class="btn btn-outline" onclick="clSearch()">Search Clockchain</button>
           <div class="docs-note" style="margin-top:18px;">Every receipt is self-verifying: recompute the hash, compare to the on-chain block. <b>Proof, not a screenshot.</b></div>
         </div>
 
@@ -169,7 +170,7 @@
       </div>
     </div>
   </div>
-  <script src="app.js?v=2"></script>
+  <script src="app.js?v=3"></script>
   <script>
   /* Create log: three input modes feed one hash row. Hashing is real (WebCrypto). */
   (function(){
@@ -272,14 +273,36 @@
       document.getElementById('cl-preview').hidden = true;
       document.getElementById('cl-form').hidden = false;
     };
+    window.clSearch = function(){
+      var q = document.getElementById('cl-search').value.trim();
+      location.href = 'search.html' + (q ? '?q=' + encodeURIComponent(q) : '');
+    };
+    function mintKey(){
+      var c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s = 'CC-';
+      for(var i = 0; i < 8; i++){ if(i === 4) s += '-'; s += c[Math.floor(Math.random() * c.length)]; }
+      return s;
+    }
     window.clSubmit = function(){
       var block = (document.getElementById('tb-height') || {}).textContent || '#—';
       var name = document.getElementById('cl-in-name').value.trim() || '—';
       var shortHash = st.hash.length > 14 ? st.hash.slice(0, 6) + '…' + st.hash.slice(-4) : st.hash;
+      var key = mintKey();
       var now = new Date();
       function p(n){ return String(n).padStart(2, '0'); }
       var when = now.getUTCFullYear() + '-' + p(now.getUTCMonth()+1) + '-' + p(now.getUTCDate())
         + ' ' + p(now.getUTCHours()) + ':' + p(now.getUTCMinutes()) + ' UTC';
+      try{
+        var fresh = JSON.parse(sessionStorage.getItem('cc-fresh-logs') || '[]');
+        fresh.unshift({
+          hash: st.hash, short: shortHash, name: name,
+          assetId: document.getElementById('cl-in-id').value.trim(),
+          ver: document.getElementById('cl-in-ver').value.trim(), text: '',
+          userId: 'usr_9d4f', block: parseInt(block.replace(/[#,]/g, ''), 10) || 0,
+          status: 'Verified', when: 'just now',
+          anchored: when.replace(' UTC', ' Clockchain Time'), key: key
+        });
+        sessionStorage.setItem('cc-fresh-logs', JSON.stringify(fresh));
+      }catch(e){}
       var tr = document.createElement('tr');
       tr.innerHTML = '<td class="mono"></td><td></td><td class="mono"></td><td></td><td><span class="status-pill">Verified</span></td>';
       tr.children[0].textContent = shortHash;
@@ -292,7 +315,7 @@
       st.remaining--; st.consumed++;
       document.getElementById('cl-remaining').textContent = st.remaining.toLocaleString() + ' / 1,500';
       document.getElementById('cl-consumed').textContent = st.consumed.toLocaleString();
-      ccToast('Log anchored to block ' + block);
+      ccToast('Log anchored to block ' + block + ' · quicklink ' + key);
 
       /* reset to the empty hashed-zone state */
       ['cl-in-hash','cl-in-text','cl-in-name','cl-in-id','cl-in-info','cl-in-ver'].forEach(function(id){
