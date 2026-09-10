@@ -379,6 +379,26 @@ h1,h2,h3,h4{font-family:var(--f-display);font-weight:500;letter-spacing:-0.015em
 .choice input[type=radio]{accent-color:var(--accent);flex:none;}
 .choice .sub{display:block;flex-basis:100%;font-size:11.5px;color:var(--fg-3);margin-left:23px;}
 .choice a{color:var(--accent);font-size:12px;}
+/* round 4: row expansion, proof, native date inputs */
+.filters input[type=date],.filters input[type=time]{width:auto;}
+.date-in{color-scheme:dark;}
+[data-theme="light"] .date-in{color-scheme:light;}
+.field input[type=date],.field input[type=time]{color-scheme:dark;}
+[data-theme="light"] .field input[type=date],[data-theme="light"] .field input[type=time]{color-scheme:light;}
+.xbtn{background:none;border:none;color:var(--fg-3);cursor:pointer;padding:4px 6px;border-radius:6px;line-height:0;transition:transform .15s,color .15s;}
+.xbtn:hover{color:var(--fg);}
+.xbtn.open{transform:rotate(180deg);color:var(--accent);}
+tr.xrow>td{padding:4px 6px 12px;border-bottom:1px solid var(--line);}
+.xpanel{background:var(--surface-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:14px 16px;}
+.xpanel.api{border-left-color:#5b8fc9;}
+.xpanel.contract{border-left-color:#c9a35b;}
+.tpill{display:inline-block;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:999px;margin-bottom:10px;background:var(--accent-soft);color:var(--accent);}
+.tpill-api{background:rgba(91,143,201,.14);color:#5b8fc9;}
+.tpill-contract{background:rgba(201,163,91,.14);color:#c9a35b;}
+.xgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px 20px;}
+.xgrid .k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-3);margin-bottom:3px;}
+.xgrid .v{font-size:12.5px;color:var(--fg-2);word-break:break-all;}
+.xactions{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap;}
 
 /* ===== Create log form (round 2) ===== */
 .cl-zone{border-radius:12px;padding:16px 18px;}

@@ -3,6 +3,7 @@
 Work happens in this repo, separate from the site. Round-1 build shipped 2026-08-11, spec in SPEC-ROUND-1.md.
 Round 2 (Jeff Ravetto's Log Creation form redesign, team-approved) built 2026-08-27, spec in SPEC-ROUND-2.md; round 2.1 copy pass (Jeff+Ken) same week.
 Round 3 (Jeff's five mockups: Search & Verify + Advanced Search + quicklink, Pricing, Billing & Usage rebuild, Payment Methods) built 2026-09-02, spec in SPEC-ROUND-3.md. Quicklink merged with the verify-link idea; rest of the encourage-use list still parked. Open asks to Satish in the spec's last section.
+Round 4 (one search page: advanced collapses in place, service tabs, row expansion + Proof of Log certificate, block↔time conversion, global toggle, native date/time inputs, Stripe Manage-billing buttons) built 2026-09-10, spec in SPEC-ROUND-4.md. Known mismatch to raise: topbar live block-height ticker (~#5.99M) vs canned event blocks (#36M), pre-existing since round 1.
 
 1. **Connections section** — DONE. Sidebar group with API (new api-keys.html: table, reveal/copy, mock generate + revoke) and MCP (links to docs/mcp.html, highlights in sidebar).
 2. **Top right corner** titles next to the numbers — DONE ("Clockchain Time" / "Clockchain Block Height" labels, hidden under 980px).
