@@ -83,7 +83,22 @@
     NAV.forEach(function(g){ g.items.forEach(function(it){
       opts += '<option value="' + base + it.href + '"' + (it.id === active ? ' selected' : '') + '>' + it.label + '</option>';
     }); });
+    var SITE = 'https://koan-shdw.github.io/clockchain-preview-r2/';
+    opts += '<optgroup label="Clockchain site">'
+      + '<option value="' + SITE + 'about.html">About</option>'
+      + '<option value="' + SITE + 'services.html">Services</option>'
+      + '<option value="' + SITE + 'newsroom.html">News</option>'
+      + '<option value="' + SITE + 'docs.html">Docs</option>'
+      + '<option value="https://clockchain.network/service/docs">API/MCP</option>'
+      + '</optgroup>';
     opts += '<option value="' + base + 'login.html">Sign out</option>';
+    var glinks = '<nav class="tb-global" aria-label="Clockchain site">'
+      + '<a href="' + SITE + 'about.html">About</a>'
+      + '<a href="' + SITE + 'services.html">Services</a>'
+      + '<a href="' + SITE + 'newsroom.html">News</a>'
+      + '<a href="' + SITE + 'docs.html">Docs</a>'
+      + '<a href="https://clockchain.network/service/docs">API/MCP</a>'
+      + '</nav>';
     var chip = document.body.hasAttribute('data-token-chip')
       ? '<span class="tb-stat"><span class="tb-label">Token Balance</span><span>15,326.0382716 CCTT</span></span>'
       : '';
@@ -91,9 +106,11 @@
       '<div class="tb-title">' + title + ' <span class="net-badge">Testnet</span></div>'
       + '<div class="tb-right">'
       + '<nav class="tb-mobile-nav"><select onchange="location.href=this.value" aria-label="Navigate">' + opts + '</select></nav>'
+      + glinks
       + chip
       + '<span class="tb-stat"><span class="live-dot"></span><span class="tb-label">Clockchain Time</span><span id="tb-time">--:--:--</span></span>'
       + '<span class="tb-stat"><span class="tb-label">Clockchain Block Height</span><span id="tb-height">#—</span></span>'
+      + '<a class="tb-signout" href="' + base + 'login.html">Sign out</a>'
       + '<button class="tb-theme" id="tb-theme" type="button" aria-label="Toggle light mode" onclick="ccTheme()"></button>'
       + '</div>';
   }
