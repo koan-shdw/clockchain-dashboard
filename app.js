@@ -83,6 +83,7 @@
     NAV.forEach(function(g){ g.items.forEach(function(it){
       opts += '<option value="' + base + it.href + '"' + (it.id === active ? ' selected' : '') + '>' + it.label + '</option>';
     }); });
+    opts += '<option value="' + base + 'login.html">Sign out</option>';
     var chip = document.body.hasAttribute('data-token-chip')
       ? '<span class="tb-stat"><span class="tb-label">Token Balance</span><span>15,326.0382716 CCTT</span></span>'
       : '';

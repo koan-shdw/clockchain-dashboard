@@ -84,20 +84,59 @@
         </div>
 
         <div class="section card">
-          <div class="card-head"><h3>Recent requests</h3></div>
+          <div class="card-head"><h3>Your API activity</h3></div>
+          <p style="font-size:12px;color:var(--fg-3);margin-bottom:10px;">Your historic Timestamp API calls. Account holders see their own calls only.</p>
+          <div class="filters">
+            <span class="flt-label">Filters</span>
+            <label>Endpoint
+              <select id="aa-endpoint" onchange="aaRun()" style="margin-left:6px;">
+                <option value="">All</option>
+                <option value="time/time">time</option>
+                <option value="time/timestamp">timestamp</option>
+                <option value="time/block">block</option>
+              </select>
+            </label>
+          </div>
+          <div class="filters">
+            <span class="flt-label">Date</span>
+            <label><input type="radio" name="aa-date" checked /> Today</label>
+            <label><input type="radio" name="aa-date" /> Last 30 days</label>
+            <label><input type="radio" name="aa-date" /> All time</label>
+            <label><input type="radio" name="aa-date" /> Custom</label>
+            <input class="date-in" type="date" value="2026-08-25" aria-label="From" />
+            <input class="date-in" type="date" value="2026-08-25" aria-label="To" />
+          </div>
           <table class="table">
-            <thead><tr><th>Endpoint</th><th>Status</th><th>Latency</th><th>When</th></tr></thead>
-            <tbody>
-              <tr><td class="mono">GET api/time/timestamp</td><td><span class="status-pill">200</span></td><td>81 ms</td><td>10 min ago</td></tr>
-              <tr><td class="mono">GET api/time/time</td><td><span class="status-pill">200</span></td><td>76 ms</td><td>26 min ago</td></tr>
-              <tr><td class="mono">GET api/time/block?height=36000</td><td><span class="status-pill">200</span></td><td>92 ms</td><td>1 h ago</td></tr>
-            </tbody>
+            <thead><tr><th>Endpoint</th><th>Status</th><th>Latency</th><th>Block</th><th>Reference key</th><th>When</th></tr></thead>
+            <tbody id="aa-rows"></tbody>
           </table>
         </div>
 
       </div>
     </div>
   </div>
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
+  <script>
+  (function(){
+    /* mock request log — the 10-min-ago timestamp call matches the search dataset (same key) */
+    var CALLS = [
+      { ep:'GET api/time/timestamp', path:'time/timestamp', st:'200', lat:'81 ms', block:'#36,041,367', key:'CC-2T6M-8A4P', when:'10 min ago' },
+      { ep:'GET api/time/time', path:'time/time', st:'200', lat:'76 ms', block:'#36,041,214', key:'CC-7P3H-2K8V', when:'26 min ago' },
+      { ep:'GET api/time/block?height=36000', path:'time/block', st:'200', lat:'92 ms', block:'#36,040,911', key:'CC-4M6T-8W2N', when:'1 h ago' },
+      { ep:'GET api/time/timestamp', path:'time/timestamp', st:'200', lat:'79 ms', block:'#36,039,102', key:'CC-9K2R-5D7Q', when:'2 h ago' },
+      { ep:'GET api/time/timestamp', path:'time/timestamp', st:'429', lat:'12 ms', block:'—', key:'—', when:'2 h ago' },
+      { ep:'GET api/time/block?height=35990000', path:'time/block', st:'200', lat:'88 ms', block:'#36,021,554', key:'CC-6F8W-3J5M', when:'yesterday' }
+    ];
+    window.aaRun = function(){
+      var f = document.getElementById('aa-endpoint').value;
+      var rows = CALLS.filter(function(c){ return !f || c.path === f; });
+      document.getElementById('aa-rows').innerHTML = rows.length ? rows.map(function(c){
+        return '<tr><td class="mono">' + c.ep + '</td><td><span class="status-pill">' + c.st + '</span></td><td>' + c.lat
+          + '</td><td class="mono">' + c.block + '</td><td class="mono">' + c.key + '</td><td>' + c.when + '</td></tr>';
+      }).join('') : '<tr><td colspan="6" class="empty">No calls match.</td></tr>';
+    };
+    aaRun();
+  })();
+  </script>
 </body>
 </html>
