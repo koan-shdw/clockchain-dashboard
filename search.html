@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@100;200;300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="app.css?v=8" />
+  <link rel="stylesheet" href="app.css?v=9" />
   <script>(function(){try{if(localStorage.getItem('ccapp-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 </head>
 <body data-nav="search">
@@ -37,7 +37,7 @@
             <div class="cl-divider"></div>
             <div class="tabs">
               <button class="tabbtn active" type="button" onclick="svTab('log',this)">Logs</button>
-              <button class="tabbtn" type="button" onclick="svTab('api',this)">Timestamps</button>
+              <button class="tabbtn" type="button" onclick="svTab('api',this)">Time Services</button>
               <button class="tabbtn" type="button" onclick="svTab('contract',this)">Smart Contracts</button>
             </div>
 
@@ -113,9 +113,13 @@
           <div class="filters">
             <span class="flt-label">Filters</span>
             <label><input type="checkbox" data-cat="log" checked onchange="svRun()" /> Logging</label>
-            <label><input type="checkbox" data-cat="api" checked onchange="svRun()" /> Timestamp/APIs</label>
+            <label><input type="checkbox" data-cat="api" checked onchange="svRun()" /> Time Services</label>
             <label><input type="checkbox" data-cat="contract" onchange="svRun()" /> Smart Contracts</label>
-            <label style="margin-left:auto;"><input type="checkbox" id="sv-global" onchange="svRun()" /> Search entire chain</label>
+            <input type="checkbox" id="sv-global" hidden />
+            <span class="tabs" style="margin-left:auto;margin-bottom:0;">
+              <button class="tabbtn active" type="button" id="sv-scope-mine" onclick="svScope(false)">My data</button>
+              <button class="tabbtn" type="button" id="sv-scope-all" onclick="svScope(true)">Entire chain</button>
+            </span>
           </div>
           <div class="filters">
             <span class="flt-label">Date</span>
@@ -135,11 +139,17 @@
       </div>
     </div>
   </div>
-  <script src="app.js?v=7"></script>
+  <script src="app.js?v=8"></script>
   <script src="search.js?v=2"></script>
   <script>
   (function(){
     var current = null, tab = 'log';
+    window.svScope = function(all){
+      document.getElementById('sv-global').checked = all;
+      document.getElementById('sv-scope-mine').classList.toggle('active', !all);
+      document.getElementById('sv-scope-all').classList.toggle('active', all);
+      svRun();
+    };
     window.svToggleAdv = function(){
       var p = document.getElementById('sv-adv'), b = document.getElementById('sv-adv-btn');
       p.hidden = !p.hidden;

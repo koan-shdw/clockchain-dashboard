@@ -27,7 +27,7 @@
     { group: 'Services', items: [
       { id: 'logging', label: 'Logging', href: 'logging.html', icon: '<path d="M4 6h16M4 12h16M4 18h10"/>' },
       { id: 'contracts', label: 'Smart Contracts', href: 'contracts.html', icon: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>' },
-      { id: 'timestamp', label: 'Timestamp', href: 'timestamp.html', icon: '<path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 5l-2 14"/>' }
+      { id: 'timestamp', label: 'Time Services', href: 'timestamp.html', icon: '<path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 5l-2 14"/>' }
     ]},
     { group: 'Connections', items: [
       { id: 'apikeys', label: 'API', href: 'api-keys.html', icon: '<circle cx="9" cy="15" r="3.5"/><path d="M11.5 12.5 20 4M16 8l3 3"/>' },
@@ -42,7 +42,8 @@
     { group: 'Account', items: [
       { id: 'account', label: 'Billing & Usage', href: 'account.html', icon: '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/>' },
       { id: 'payments', label: 'Payment Methods', href: 'payment-methods.html', icon: '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/>' },
-      { id: 'pricing', label: 'Pricing', href: 'pricing.html', icon: '<path d="M20 13l-7 7-8.6-8.6V4h7.4z"/><circle cx="8.5" cy="8.5" r="1.5"/>' }
+      { id: 'pricing', label: 'Pricing', href: 'pricing.html', icon: '<path d="M20 13l-7 7-8.6-8.6V4h7.4z"/><circle cx="8.5" cy="8.5" r="1.5"/>' },
+      { id: 'sccredit', label: 'Smart Contract Credit Management', href: 'smart-contract-credit.html', icon: '<rect x="4" y="7" width="16" height="11" rx="2"/><path d="M4 11h16M8 15h3"/>' }
     ]}
   ];
 
@@ -114,6 +115,22 @@
       + '<button class="tb-theme" id="tb-theme" type="button" aria-label="Toggle light mode" onclick="ccTheme()"></button>'
       + '</div>';
   }
+
+  /* ---- Buy More payment chooser (round 5, item 13): card USD vs wallet CCTT ---- */
+  window.ccBuy = function(what){
+    var old = document.getElementById('cc-buy'); if(old) old.remove();
+    var d = document.createElement('div'); d.id = 'cc-buy'; d.className = 'buy-overlay';
+    d.innerHTML = '<div class="buy-card"><h4>' + what + '</h4><p>Pay with</p>'
+      + '<button class="btn btn-primary btn-sm" onclick="ccBuyPick(\'credit card (USD)\')">Credit card · USD</button>'
+      + '<button class="btn btn-outline btn-sm" onclick="ccBuyPick(\'connected MetaMask wallet (CCTT)\')">Connected wallet · CCTT</button>'
+      + '<button class="kv-copy" onclick="document.getElementById(\'cc-buy\').remove()">Cancel</button></div>';
+    d.onclick = function(e){ if(e.target === d) d.remove(); };
+    document.body.appendChild(d);
+  };
+  window.ccBuyPick = function(method){
+    var d = document.getElementById('cc-buy'); if(d) d.remove();
+    ccToast('Mockup: purchase via ' + method);
+  };
 
   /* ---- theme: dark default, light via [data-theme="light"] on <html> ---- */
   var SUN = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.5 4.5l2 2M17.5 17.5l2 2M19.5 4.5l-2 2M6.5 17.5l-2 2"/></svg>';

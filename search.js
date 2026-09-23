@@ -12,7 +12,7 @@
     { type:'API call', cat:'api', detail:'GET api/time/timestamp', code:'200 OK',
       userId:ME, block:36041367, status:'200', when:'10 min ago',
       anchored:'2026-07-03 02:04 Clockchain Time', key:'CC-2T6M-8A4P' },
-    { type:'Contract', cat:'contract', detail:'escrow-release · trigger 2026-07-04T00:00Z',
+    { type:'Contract', cat:'contract', detail:'escrow-release · execution time 2026-07-04T00:00Z',
       cname:'escrow-release', trigger:'2026-07-04 00:00 Clockchain Time', paid:'$38.20 · 764.0 CCTT',
       userId:ME, block:null, status:'Pending', when:'1 h ago',
       anchored:'scheduled · 2026-07-04 00:00 Clockchain Time', key:'CC-3E8S-5C2R' },
@@ -29,7 +29,7 @@
       name:'audit-report-2026H1.pdf', assetId:'AUD-H1', ver:'1', text:'',
       userId:'usr_31bc', block:36012773, status:'Verified', when:'2 d ago',
       anchored:'2026-07-01 09:41 Clockchain Time', key:'CC-9J4D-7Q2F' },
-    { type:'Contract', cat:'contract', detail:'royalty-split · trigger 2026-08-01T00:00Z',
+    { type:'Contract', cat:'contract', detail:'royalty-split · execution time 2026-08-01T00:00Z',
       cname:'royalty-split', trigger:'2026-08-01 00:00 Clockchain Time', paid:'$12.75 · 255.0 CCTT',
       userId:'usr_8ee2', block:null, status:'Pending', when:'5 d ago',
       anchored:'scheduled · 2026-08-01 00:00 Clockchain Time', key:'CC-5W8N-3R6T' }
@@ -60,8 +60,12 @@
   function rowHtml(r, i){
     var detail = r.detail || (r.short + ' · ' + r.name);
     var block = r.block ? '#' + r.block.toLocaleString() : 'scheduled';
+    /* contract rows: the When cell is a print-proof action (Jeff round 5, item 7) */
+    var when = r.cat === 'contract'
+      ? '<button class="kv-copy" type="button" onclick="CCSearch.proof(' + i + ',true)">Print proof</button>'
+      : r.when;
     return '<tr><td>' + r.type + '</td><td class="mono">' + detail + '</td><td class="mono">' + block
-      + '</td><td><span class="status-pill">' + r.status + '</span></td><td>' + r.when
+      + '</td><td><span class="status-pill">' + r.status + '</span></td><td>' + when
       + '</td><td style="text-align:right;"><button class="xbtn" type="button" aria-label="Expand" onclick="CCSearch.toggle(' + i + ',this)">' + chev() + '</button></td></tr>';
   }
   function esc(s){
