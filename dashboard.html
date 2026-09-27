@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@100;200;300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="app.css?v=9" />
+  <link rel="stylesheet" href="app.css?v=10" />
   <script>(function(){try{if(localStorage.getItem('ccapp-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 </head>
 <body data-nav="dashboard">
@@ -23,41 +23,32 @@
           <p>One account, three services. Everything below runs against the live testnet.</p>
         </div>
 
-        <div class="card">
-          <div class="card-head"><h3>Credits &amp; Wallet</h3>
-            <button class="btn btn-outline btn-sm" id="db-wallet-btn" onclick="dbWallet()">Disconnect Wallet</button>
-          </div>
-          <div class="kv">
-            <div class="kv-row"><span class="kv-k">Clockchain Credits</span><span class="kv-v"><span class="mono">6,334.0138</span></span></div>
-            <div class="kv-row" id="db-wallet-row"><span class="kv-k">Token Balance in Wallet</span><span class="kv-v"><span class="mono">4,335.0921 CCTT</span></span></div>
-          </div>
-        </div>
-
-        <div class="section">
+        <div class="section" style="margin-top:0;">
           <h2>My Plans</h2>
-          <div class="card">
-            <div class="card-head"><h3>Logging</h3><a class="more" href="logging.html">Go to Logging →</a></div>
-            <div class="kv">
-              <div class="kv-row"><span class="kv-k">Plan Type</span><span class="kv-v"><span>Prepaid</span></span></div>
-              <div class="kv-row"><span class="kv-k">Prepaid Logs Remaining</span><span class="kv-v"><span class="mono">5,363</span><button class="kv-copy" onclick="ccBuy('Buy more logs')">Buy More</button></span></div>
+          <div class="plan-grid">
+            <div class="card">
+              <div class="card-head"><h3>Logging</h3><a class="more" href="logging.html">Go to Logging →</a></div>
+              <div class="kv">
+                <div class="kv-row"><span class="kv-k">Plan Type</span><span class="kv-v"><span>Prepaid</span><a class="kv-copy" href="account.html#logs" style="text-decoration:none;">Manage Plan</a></span></div>
+                <div class="kv-row"><span class="kv-k">Prepaid Logs Remaining</span><span class="kv-v"><span class="mono">5,363</span><button class="kv-copy" onclick="ccBuy('Buy more logs')">Buy More</button></span></div>
+              </div>
             </div>
 
-            <div class="cl-divider"></div>
-
-            <div class="card-head"><h3>Time API</h3><a class="more" href="timestamp.html">Go to Time Services →</a></div>
-            <div class="kv">
-              <div class="kv-row"><span class="kv-k">Plan Type</span><span class="kv-v"><span>Subscription</span></span></div>
-              <div class="kv-row"><span class="kv-k">Monthly Calls Remaining</span><span class="kv-v"><span class="mono">12,032</span><button class="kv-copy" onclick="ccMock('Mockup: plan picker')">Modify Plan</button></span></div>
+            <div class="card">
+              <div class="card-head"><h3>Smart Contracts</h3><a class="more" href="contracts.html">Go to Smart Contracts →</a></div>
+              <div class="kv">
+                <div class="kv-row"><span class="kv-k">Smart Contract Credit Balance</span><span class="kv-v"><span class="mono">$31.23</span><button class="kv-copy" onclick="ccBuy('Buy Smart Contract credits')">Buy More</button></span></div>
+                <div class="kv-row"><span class="kv-k">Autopay</span><span class="kv-v"><span>On</span><a class="kv-copy" href="account.html#smart-contracts" style="text-decoration:none;">Manage</a></span></div>
+                <div class="kv-row"><span class="kv-k">Scheduled Contracts</span><span class="kv-v"><span class="mono">14</span></span></div>
+              </div>
             </div>
 
-            <div class="cl-divider"></div>
-
-            <div class="card-head"><h3>Smart Contracts</h3><a class="more" href="contracts.html">Go to Smart Contracts →</a></div>
-            <div class="kv">
-              <div class="kv-row"><span class="kv-k">Smart Contract Credit Available Balance</span><span class="kv-v"><span class="mono">$31.23</span><button class="kv-copy" onclick="ccBuy('Buy Smart Contract credits')">Buy More</button></span></div>
-              <div class="kv-row"><span class="kv-k">Autopay</span><span class="kv-v"><span>On</span><a class="kv-copy" href="smart-contract-credit.html" style="text-decoration:none;">Manage</a></span></div>
-              <div class="kv-row"><span class="kv-k">Scheduled Contracts</span><span class="kv-v"><span class="mono">14</span></span></div>
-              <div class="kv-row"><span class="kv-k">Committed Balance</span><span class="kv-v"><span class="mono">$28.42</span></span></div>
+            <div class="card">
+              <div class="card-head"><h3>Time Services</h3><a class="more" href="timestamp.html">Go to Time Services →</a></div>
+              <div class="kv">
+                <div class="kv-row"><span class="kv-k">Plan Type</span><span class="kv-v"><span>Subscription</span><a class="kv-copy" href="account.html#time-services" style="text-decoration:none;">Manage</a></span></div>
+                <div class="kv-row"><span class="kv-k">Monthly Calls Remaining</span><span class="kv-v"><span class="mono">12,032</span><button class="kv-copy" onclick="ccMock('Mockup: plan picker')">Modify Plan</button></span></div>
+              </div>
             </div>
           </div>
         </div>
@@ -78,15 +69,6 @@
       </div>
     </div>
   </div>
-  <script src="app.js?v=8"></script>
-  <script>
-  window.dbWallet = function(){
-    var row = document.getElementById('db-wallet-row'), btn = document.getElementById('db-wallet-btn');
-    var connected = !row.hidden;
-    row.hidden = connected;
-    btn.textContent = connected ? 'Connect Wallet' : 'Disconnect Wallet';
-    ccToast(connected ? 'Mockup: wallet disconnected' : 'Mockup: MetaMask wallet connected');
-  };
-  </script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>

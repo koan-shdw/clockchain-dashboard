@@ -42,8 +42,7 @@
     { group: 'Account', items: [
       { id: 'account', label: 'Billing & Usage', href: 'account.html', icon: '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/>' },
       { id: 'payments', label: 'Payment Methods', href: 'payment-methods.html', icon: '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/>' },
-      { id: 'pricing', label: 'Pricing', href: 'pricing.html', icon: '<path d="M20 13l-7 7-8.6-8.6V4h7.4z"/><circle cx="8.5" cy="8.5" r="1.5"/>' },
-      { id: 'sccredit', label: 'Smart Contract Credit Management', href: 'smart-contract-credit.html', icon: '<rect x="4" y="7" width="16" height="11" rx="2"/><path d="M4 11h16M8 15h3"/>' }
+      { id: 'pricing', label: 'Pricing', href: 'pricing.html', icon: '<path d="M20 13l-7 7-8.6-8.6V4h7.4z"/><circle cx="8.5" cy="8.5" r="1.5"/>' }
     ]}
   ];
 
@@ -100,21 +99,55 @@
       + '<a href="' + SITE + 'docs.html">Docs</a>'
       + '<a href="https://clockchain.network/service/docs">API/MCP</a>'
       + '</nav>';
-    var chip = document.body.hasAttribute('data-token-chip')
-      ? '<span class="tb-stat"><span class="tb-label">Token Balance</span><span>15,326.0382716 CCTT</span></span>'
-      : '';
     slot.innerHTML =
       '<div class="tb-title">' + title + ' <span class="net-badge">Testnet</span></div>'
       + '<div class="tb-right">'
       + '<nav class="tb-mobile-nav"><select onchange="location.href=this.value" aria-label="Navigate">' + opts + '</select></nav>'
       + glinks
-      + chip
       + '<span class="tb-stat"><span class="live-dot"></span><span class="tb-label">Clockchain Time</span><span id="tb-time">--:--:--</span></span>'
       + '<span class="tb-stat"><span class="tb-label">Clockchain Block Height</span><span id="tb-height">#—</span></span>'
+      + '<div class="tb-wallet" id="tb-wallet"></div>'
       + '<a class="tb-signout" href="' + base + 'login.html">Sign out</a>'
       + '<button class="tb-theme" id="tb-theme" type="button" aria-label="Toggle light mode" onclick="ccTheme()"></button>'
       + '</div>';
   }
+
+  /* ---- header wallet (Jeff 09-22 item 4, 09-24 dashboard): dApp-style connect on every page,
+     connected state persists across pages for the session mock ---- */
+  var WALLET = { addr: '0x8d4f…22b1', bal: '4,335.0921 CCTT', net: 'MetaMask · Ethereum' };
+  function walletOn(){
+    try{ return localStorage.getItem('ccapp-wallet') !== 'off'; }catch(e){ return true; }
+  }
+  function paintWallet(){
+    var w = document.getElementById('tb-wallet');
+    if(!w) return;
+    if(!walletOn()){
+      w.innerHTML = '<button class="btn btn-primary btn-sm tb-wallet-connect" type="button" onclick="ccWallet(true)">Connect Wallet</button>';
+      return;
+    }
+    w.innerHTML = '<button class="tb-wallet-pill" type="button" aria-haspopup="true" onclick="ccWalletMenu(event)">'
+      + '<span class="live-dot"></span><span class="tb-wallet-bal">' + WALLET.bal + '</span>'
+      + '<span class="tb-wallet-addr">' + WALLET.addr + '</span>'
+      + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>'
+      + '<div class="tb-wallet-menu" id="tb-wallet-menu" hidden>'
+      + '<div class="tb-wallet-net">' + WALLET.net + '</div>'
+      + '<div class="tb-wallet-row"><span>Wallet balance</span><span class="mono">' + WALLET.bal + '</span></div>'
+      + '<button class="btn btn-outline btn-sm" type="button" onclick="ccWallet(false)">Disconnect</button></div>';
+  }
+  window.ccWallet = function(on){
+    try{ localStorage.setItem('ccapp-wallet', on ? 'on' : 'off'); }catch(e){}
+    paintWallet();
+    ccToast(on ? 'Mockup: MetaMask wallet connected' : 'Mockup: wallet disconnected');
+  };
+  window.ccWalletMenu = function(e){
+    e.stopPropagation();
+    var m = document.getElementById('tb-wallet-menu');
+    if(m) m.hidden = !m.hidden;
+  };
+  document.addEventListener('click', function(e){
+    var m = document.getElementById('tb-wallet-menu');
+    if(m && !m.hidden && !e.target.closest('.tb-wallet')) m.hidden = true;
+  });
 
   /* ---- Buy More payment chooser (round 5, item 13): card USD vs wallet CCTT ---- */
   window.ccBuy = function(what){
@@ -194,7 +227,9 @@
 
   renderSidebar();
   renderTopbar();
+  paintWallet();
   paintTheme();
+  if(location.hash){ var jump = document.getElementById(location.hash.slice(1)); if(jump) jump.scrollIntoView(); }
   tick();
   setInterval(tick, 1000);
 })();

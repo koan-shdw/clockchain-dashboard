@@ -20,6 +20,10 @@
       name:'supplier-manifest.pdf', assetId:'SUP-0142', ver:'1', text:'',
       userId:ME, block:36038554, status:'Verified', when:'3 h ago',
       anchored:'2026-07-03 01:03 Clockchain Time', key:'CC-8N3V-2Q5T' },
+    { type:'Contract', cat:'contract', detail:'option-expiry · execution time 2026-06-30T16:00Z',
+      cname:'option-expiry', trigger:'2026-06-30 16:00 Clockchain Time', paid:'$0.31 USD',
+      userId:ME, block:35812021, status:'Executed', when:'3 d ago',
+      anchored:'2026-06-30 16:00 Clockchain Time', key:'CC-7P2L-4K9D' },
     { type:'Log', cat:'log', hash:'0xe7a05f14b92d3c48', short:'0xe7a0…3c48',
       name:'deploy-artifact 4.2.1', assetId:'DPL-421', ver:'421', text:'',
       userId:ME, block:35991207, status:'Verified', when:'yesterday',
@@ -60,10 +64,18 @@
   function rowHtml(r, i){
     var detail = r.detail || (r.short + ' · ' + r.name);
     var block = r.block ? '#' + r.block.toLocaleString() : 'scheduled';
-    /* contract rows: the When cell is a print-proof action (Jeff round 5, item 7) */
-    var when = r.cat === 'contract'
-      ? '<button class="kv-copy" type="button" onclick="CCSearch.proof(' + i + ',true)">Print proof</button>'
-      : r.when;
+    /* contract rows: the When cell is a print-proof action (Jeff round 5, item 7);
+       pending contracts get Edit (placeholder until the modify/cancel flow is defined),
+       executed ones get Schedule again (Jeff 09-24) */
+    var when = r.when;
+    if(r.cat === 'contract'){
+      when = '<span class="row-acts"><button class="kv-copy" type="button" onclick="CCSearch.proof(' + i + ',true)">Print proof</button>';
+      if(r.status === 'Pending' && r.userId === ME)
+        when += '<button class="kv-copy" type="button" onclick="ccMock(\'Mockup: edit this scheduled contract (reschedule or cancel). Flow to come.\')">Edit</button>';
+      if(r.status === 'Executed' && r.userId === ME)
+        when += '<a class="kv-copy" style="text-decoration:none;" href="contracts.html?again=' + encodeURIComponent(r.cname) + '">Schedule again</a>';
+      when += '</span>';
+    }
     return '<tr><td>' + r.type + '</td><td class="mono">' + detail + '</td><td class="mono">' + block
       + '</td><td><span class="status-pill">' + r.status + '</span></td><td>' + when
       + '</td><td style="text-align:right;"><button class="xbtn" type="button" aria-label="Expand" onclick="CCSearch.toggle(' + i + ',this)">' + chev() + '</button></td></tr>';
