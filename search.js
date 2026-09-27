@@ -12,18 +12,18 @@
     { type:'API call', cat:'api', detail:'GET api/time/timestamp', code:'200 OK',
       userId:ME, block:36041367, status:'200', when:'10 min ago',
       anchored:'2026-07-03 02:04 Clockchain Time', key:'CC-2T6M-8A4P' },
-    { type:'Contract', cat:'contract', detail:'escrow-release · execution time 2026-07-04T00:00Z',
-      cname:'escrow-release', trigger:'2026-07-04 00:00 Clockchain Time', paid:'$38.20 · 764.0 CCTT',
-      userId:ME, block:null, status:'Pending', when:'1 h ago',
-      anchored:'scheduled · 2026-07-04 00:00 Clockchain Time', key:'CC-3E8S-5C2R' },
+    { type:'Contract', cat:'contract', detail:'escrow-release · execution time 2026-07-04 00:00:00 UVT',
+      cname:'escrow-release', trigger:'2026-07-04 00:00:00 UVT', paid:'$38.20 · 764.0 CCTT',
+      userId:ME, block:null, status:'Scheduled', when:'1 h ago',
+      anchored:'scheduled · 2026-07-04 00:00:00 UVT', key:'CC-3E8S-5C2R' },
     { type:'Log', cat:'log', hash:'0x4b219cd7e60a09dd', short:'0x4b21…09dd',
       name:'supplier-manifest.pdf', assetId:'SUP-0142', ver:'1', text:'',
       userId:ME, block:36038554, status:'Verified', when:'3 h ago',
       anchored:'2026-07-03 01:03 Clockchain Time', key:'CC-8N3V-2Q5T' },
-    { type:'Contract', cat:'contract', detail:'option-expiry · execution time 2026-06-30T16:00Z',
-      cname:'option-expiry', trigger:'2026-06-30 16:00 Clockchain Time', paid:'$0.31 USD',
+    { type:'Contract', cat:'contract', detail:'option-expiry · execution time 2026-06-30 16:00:00 UVT',
+      cname:'option-expiry', trigger:'2026-06-30 16:00:00 UVT', paid:'$0.31 USD',
       userId:ME, block:35812021, status:'Executed', when:'3 d ago',
-      anchored:'2026-06-30 16:00 Clockchain Time', key:'CC-7P2L-4K9D' },
+      anchored:'2026-06-30 16:00:00 UVT', key:'CC-7P2L-4K9D' },
     { type:'Log', cat:'log', hash:'0xe7a05f14b92d3c48', short:'0xe7a0…3c48',
       name:'deploy-artifact 4.2.1', assetId:'DPL-421', ver:'421', text:'',
       userId:ME, block:35991207, status:'Verified', when:'yesterday',
@@ -33,10 +33,10 @@
       name:'audit-report-2026H1.pdf', assetId:'AUD-H1', ver:'1', text:'',
       userId:'usr_31bc', block:36012773, status:'Verified', when:'2 d ago',
       anchored:'2026-07-01 09:41 Clockchain Time', key:'CC-9J4D-7Q2F' },
-    { type:'Contract', cat:'contract', detail:'royalty-split · execution time 2026-08-01T00:00Z',
-      cname:'royalty-split', trigger:'2026-08-01 00:00 Clockchain Time', paid:'$12.75 · 255.0 CCTT',
-      userId:'usr_8ee2', block:null, status:'Pending', when:'5 d ago',
-      anchored:'scheduled · 2026-08-01 00:00 Clockchain Time', key:'CC-5W8N-3R6T' }
+    { type:'Contract', cat:'contract', detail:'royalty-split · execution time 2026-08-01 00:00:00 UVT',
+      cname:'royalty-split', trigger:'2026-08-01 00:00:00 UVT', paid:'$12.75 · 255.0 CCTT',
+      userId:'usr_8ee2', block:null, status:'Scheduled', when:'5 d ago',
+      anchored:'scheduled · 2026-08-01 00:00:00 UVT', key:'CC-5W8N-3R6T' }
   ];
   try{
     (JSON.parse(sessionStorage.getItem('cc-fresh-logs') || '[]')).forEach(function(r){
@@ -70,7 +70,7 @@
     var when = r.when;
     if(r.cat === 'contract'){
       when = '<span class="row-acts"><button class="kv-copy" type="button" onclick="CCSearch.proof(' + i + ',true)">Print proof</button>';
-      if(r.status === 'Pending' && r.userId === ME)
+      if(r.status === 'Scheduled' && r.userId === ME)
         when += '<button class="kv-copy" type="button" onclick="ccMock(\'Mockup: edit this scheduled contract (reschedule or cancel). Flow to come.\')">Edit</button>';
       if(r.status === 'Executed' && r.userId === ME)
         when += '<a class="kv-copy" style="text-decoration:none;" href="contracts.html?again=' + encodeURIComponent(r.cname) + '">Schedule again</a>';
@@ -209,7 +209,7 @@
         if(f.ver && String(r.ver) !== String(f.ver)) return false;
         if(f.cname && norm(r.cname || r.detail).indexOf(norm(f.cname)) === -1) return false;
         if(f.cstatus && f.cstatus !== 'Any'){
-          var map = { Scheduled: 'Pending', Executed: 'Executed', Canceled: 'Canceled' };
+          var map = { Scheduled: 'Scheduled', Executed: 'Executed', Canceled: 'Canceled' };
           if(r.status !== map[f.cstatus]) return false;
         }
         return true;
