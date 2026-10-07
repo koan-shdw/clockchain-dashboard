@@ -27,7 +27,7 @@
     { group: 'Services', items: [
       { id: 'logging', label: 'Logging', href: 'logging.html', icon: '<path d="M4 6h16M4 12h16M4 18h10"/>' },
       { id: 'contracts', label: 'Smart Contracts', href: 'contracts.html', icon: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>' },
-      { id: 'timestamp', label: 'Time Services', href: 'timestamp.html', icon: '<path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 5l-2 14"/>' }
+      { id: 'timestamp', label: 'Time API', href: 'timestamp.html', icon: '<path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 5l-2 14"/>' }
     ]},
     { group: 'Connections', items: [
       { id: 'apikeys', label: 'API', href: 'api-keys.html', icon: '<circle cx="9" cy="15" r="3.5"/><path d="M11.5 12.5 20 4M16 8l3 3"/>' },

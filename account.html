@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@100;200;300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="app.css?v=12" />
+  <link rel="stylesheet" href="app.css?v=13" />
   <script>(function(){try{if(localStorage.getItem('ccapp-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 </head>
 <body data-nav="account">
@@ -42,21 +42,21 @@
         </details>
 
         <details class="acc acct-anchor" id="time-services" open>
-          <summary>Time Services<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <summary>Time API<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></summary>
           <div class="acc-body">
             <p style="margin-bottom:4px;">4 days remaining in plan month <span style="color:var(--fg-3);font-size:12px;">(resets Oct 1, 2026 at midnight Clockchain Time)</span></p>
             <div class="bar"><div class="bar-fill" style="width:60%;"></div></div>
             <div class="bar-legend"><span>12,032 remaining (60%)</span><span>7,968 consumed (40%)</span></div>
 
-            <div class="stat-k" style="margin:18px 0 8px;">Plan Type for Time Services · <a href="pricing.html" style="color:var(--accent);text-transform:none;letter-spacing:0;">see pricing</a></div>
+            <div class="stat-k" style="margin:18px 0 8px;">Plan Type for Time API · <a href="pricing.html" style="color:var(--accent);text-transform:none;letter-spacing:0;">see pricing</a></div>
             <div class="choice">
-              <label><input type="radio" name="ts-plan" /> Prepaid blocks of Time Service calls
-                <a href="#" onclick="ccBuy('Buy more Time Service calls');return false;">buy more</a>
+              <label><input type="radio" name="ts-plan" /> Prepaid blocks of Time API calls
+                <a href="#" onclick="ccBuy('Buy more Time API calls');return false;">buy more</a>
                 <a href="#" onclick="ccMock('Mockup: autopay settings');return false;">manage autopay</a></label>
               <label><input type="radio" name="ts-plan" checked /> Subscription — current plan: Developer <a href="#" onclick="ccMock('Mockup: plan picker');return false;">Change Subscription Plan</a> <a href="payment-methods.html">manage payment method</a>
                 <span class="sub">You can apply prorated credit for unused prepaid calls to a subscription.</span></label>
             </div>
-            <button class="btn btn-outline btn-sm" onclick="ccMock('Mockup: plan change simulated')">Change payment plan for Time Services</button>
+            <button class="btn btn-outline btn-sm" onclick="ccMock('Mockup: plan change simulated')">Change payment plan for Time API</button>
           </div>
         </details>
 
@@ -100,7 +100,7 @@
             <div class="filters">
               <span class="flt-label">Filters</span>
               <label><input type="checkbox" checked /> Logging</label>
-              <label><input type="checkbox" checked /> Time Services</label>
+              <label><input type="checkbox" checked /> Time API</label>
               <label><input type="checkbox" /> Smart Contracts</label>
             </div>
             <div class="filters">
@@ -126,6 +126,6 @@
       </div>
     </div>
   </div>
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>

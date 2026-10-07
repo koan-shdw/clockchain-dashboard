@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@100;200;300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="app.css?v=12" />
+  <link rel="stylesheet" href="app.css?v=13" />
   <script>(function(){try{if(localStorage.getItem('ccapp-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 </head>
 <body data-nav="search">
@@ -37,7 +37,7 @@
             <div class="cl-divider"></div>
             <div class="tabs">
               <button class="tabbtn active" type="button" onclick="svTab('log',this)">Logs</button>
-              <button class="tabbtn" type="button" onclick="svTab('api',this)">Time Services</button>
+              <button class="tabbtn" type="button" onclick="svTab('api',this)">Time API</button>
               <button class="tabbtn" type="button" onclick="svTab('contract',this)">Smart Contracts</button>
             </div>
 
@@ -112,9 +112,10 @@
           <div class="card-head"><h3>Results</h3></div>
           <div class="filters">
             <span class="flt-label">Filters</span>
-            <label><input type="checkbox" data-cat="log" checked onchange="svRun()" /> Logging</label>
-            <label><input type="checkbox" data-cat="api" checked onchange="svRun()" /> Time Services</label>
-            <label><input type="checkbox" data-cat="contract" onchange="svRun()" /> Smart Contracts</label>
+            <label><input type="checkbox" data-cat="log" autocomplete="off" checked onchange="svRun()" /> Logging</label>
+            <label><input type="checkbox" data-cat="api" autocomplete="off" checked onchange="svRun()" /> Time API</label>
+            <label><input type="checkbox" data-cat="contract" autocomplete="off" onchange="svRun()" /> Smart Contracts</label>
+            <label><input type="checkbox" id="sv-bt" autocomplete="off" onchange="CCSearch.rerender()" /> Block Time</label>
             <input type="checkbox" id="sv-global" hidden />
             <span class="tabs" style="margin-left:auto;margin-bottom:0;">
               <button class="tabbtn active" type="button" id="sv-scope-mine" onclick="svScope(false)">My data</button>
@@ -131,7 +132,7 @@
             <input class="date-in" type="date" value="2026-08-25" aria-label="To" />
           </div>
           <table class="table">
-            <thead><tr><th>Type</th><th>Detail</th><th>Block</th><th>Status</th><th>When</th><th></th></tr></thead>
+            <thead><tr><th>Type</th><th>Detail</th><th>Block</th><th id="sv-bt-th" hidden>Block Time</th><th>Status</th><th>When</th><th></th></tr></thead>
             <tbody id="sv-rows"></tbody>
           </table>
         </div>
@@ -139,8 +140,8 @@
       </div>
     </div>
   </div>
-  <script src="app.js?v=10"></script>
-  <script src="search.js?v=2"></script>
+  <script src="app.js?v=11"></script>
+  <script src="search.js?v=4"></script>
   <script>
   (function(){
     var current = null, tab = 'log';
@@ -188,7 +189,7 @@
           box.appendChild(r);
         });
         document.getElementById('rc-block').textContent = hit.block ? '#' + hit.block.toLocaleString() : 'scheduled';
-        document.getElementById('rc-time').textContent = hit.anchored;
+        document.getElementById('rc-time').textContent = CCSearch.consensus(hit);
         document.getElementById('rc-key').textContent = hit.key;
         panel.hidden = false;
         CCSearch.render([hit], document.getElementById('sv-rows'));
