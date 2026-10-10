@@ -134,12 +134,11 @@
   </div>
   <div class="sheet-wrap"><div class="sheet" id="sheet"></div></div>
 
-  <script src="search.js?v=4"></script>
+  <script src="search.js?v=5"></script>
   <script>
   (function(){
     var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    /* mock "now" for the canned rows: the newest log ("2 min ago") anchored 02:12 */
-    var NOW = Date.UTC(2026, 6, 3, 2, 14, 0);
+    var NOW = CCSearch.now;
     /* chain + address as the Smart Contracts page knows them (it shows them shortened, 0x8d4f…22b1) */
     var KNOWN = { 'escrow-release': ['Ethereum','0x8d4f','22b1'], 'option-expiry': ['Ethereum','0x3fb8','c052'], 'royalty-split': ['Polygon'] };
 
@@ -164,11 +163,6 @@
       return out.slice(0, n);
     }
     function uuid(salt){ var x = hex(32, salt); return x.slice(0,8)+'-'+x.slice(8,12)+'-'+x.slice(12,16)+'-'+x.slice(16,20)+'-'+x.slice(20); }
-    function ago(w){
-      var m = /(\d+)\s*(min|h|d)/.exec(w || ''), unit = { min: 6e4, h: 36e5, d: 864e5 };
-      var back = m ? +m[1] * unit[m[2]] : /yesterday/.test(w || '') ? 864e5 : 0;
-      return NOW - back + (CCSearch.seedOf(r.key + 'c') % 60) * 1000;
-    }
     function f(cls, k, v){ return '<div class="f ' + cls + '"><div class="c-k">' + k + '</div>' + v + '</div>'; }
     function tm(ms, label){ return '<div class="v t">' + hms(ms) + '<span class="sub">' + dShort(ms) + ' / ' + label + '</span></div>'; }
 
@@ -181,7 +175,7 @@
       var executed = r.status === 'Executed';
       var trig = /(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)/.exec(r.trigger || '');
       var forMs = trig ? Date.UTC(+trig[1], trig[2]-1, +trig[3], +trig[4], +trig[5], +trig[6]) : ms;
-      var made = ago(r.when);
+      var made = CCSearch.created(r);
       if(!executed) event = made;
       var addr = known[1] ? known[1] + hex(32, 'adr') + known[2] : '0x' + hex(40, 'adr');
       status = r.status; title = 'Smart Contract'; bigK = executed ? 'Executed at' : 'Scheduled for';

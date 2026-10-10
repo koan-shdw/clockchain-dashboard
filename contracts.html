@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@100;200;300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="app.css?v=13" />
+  <link rel="stylesheet" href="app.css?v=14" />
   <script>(function(){try{if(localStorage.getItem('ccapp-theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
 </head>
 <body data-nav="contracts">
@@ -110,13 +110,13 @@
         </div>
 
         <div class="section card">
-          <div class="card-head"><h3>Recent contract activity</h3></div>
+          <div class="card-head"><h3>Recent contract activity</h3><a class="more" href="search.html?cat=contract" target="_blank" rel="noopener">See more…</a></div>
           <table class="table">
-            <thead><tr><th>Contract</th><th>Chain</th><th>Trigger</th><th>Status</th><th></th></tr></thead>
+            <thead><tr><th>Contract</th><th>Chain</th><th>Trigger</th><th>Status</th></tr></thead>
             <tbody id="sc-activity">
-              <tr><td class="mono">escrow-release · 0x8d4f…22b1</td><td>Ethereum</td><td class="mono">2026-07-04 00:00:00 UVT</td><td><span class="status-pill">Scheduled</span></td><td><button class="kv-copy" type="button" onclick="scModifyRow()">Modify</button></td></tr>
-              <tr><td class="mono">payroll-jul · 0x1a9c…77e4</td><td>Polygon</td><td class="mono">2026-07-25 09:00:00 UVT</td><td><span class="status-pill">Scheduled</span></td><td><button class="kv-copy" type="button" onclick="scModifyRow()">Modify</button></td></tr>
-              <tr><td class="mono">option-expiry · 0x3fb8…c052</td><td>Ethereum</td><td class="mono">2026-06-30 16:00:00 UVT</td><td><span class="status-pill">Executed</span></td><td><button class="kv-copy" type="button" onclick="scAgain('option-expiry')">Schedule again</button></td></tr>
+              <tr><td class="mono">escrow-release · 0x8d4f…22b1</td><td>Ethereum</td><td class="mono">2026-07-04 00:00:00 UVT</td><td><div class="st-stack"><span class="status-pill">Scheduled</span><span class="row-acts"><button class="kv-copy" type="button" onclick="scModifyRow()">Modify</button><button class="kv-copy" type="button" onclick="scCancelRow(this,'escrow-release')">Cancel</button></span></div></td></tr>
+              <tr><td class="mono">payroll-jul · 0x1a9c…77e4</td><td>Polygon</td><td class="mono">2026-07-25 09:00:00 UVT</td><td><div class="st-stack"><span class="status-pill">Scheduled</span><span class="row-acts"><button class="kv-copy" type="button" onclick="scModifyRow()">Modify</button><button class="kv-copy" type="button" onclick="scCancelRow(this,'payroll-jul')">Cancel</button></span></div></td></tr>
+              <tr><td class="mono">option-expiry · 0x3fb8…c052</td><td>Ethereum</td><td class="mono">2026-06-30 16:00:00 UVT</td><td><div class="st-stack"><span class="status-pill">Executed</span><span class="row-acts"><button class="kv-copy" type="button" onclick="scAgain('option-expiry')">Schedule Again</button></span></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -124,7 +124,7 @@
       </div>
     </div>
   </div>
-  <script src="app.js?v=11"></script>
+  <script src="app.js?v=12"></script>
   <script>
   (function(){
     var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -180,8 +180,10 @@
       var t = readTime(); if(!t) return;
       var name = $('sc-name').value.trim() || 'unnamed', addr = $('sc-addr').value.trim();
       var tr = document.createElement('tr');
-      tr.innerHTML = '<td class="mono"></td><td></td><td class="mono"></td><td><span class="status-pill">Scheduled</span></td>'
-        + '<td><button class="kv-copy" type="button" onclick="scModifyRow()">Modify</button></td>';
+      tr.innerHTML = '<td class="mono"></td><td></td><td class="mono"></td><td><div class="st-stack"><span class="status-pill">Scheduled</span>'
+        + '<span class="row-acts"><button class="kv-copy" type="button" onclick="scModifyRow()">Modify</button>'
+        + '<button class="kv-copy" type="button">Cancel</button></span></div></td>';
+      tr.querySelector('.row-acts button + button').onclick = function(){ scCancelRow(this, name); };
       tr.children[0].textContent = name + ' · ' + short(addr);
       tr.children[1].textContent = $('sc-chain').value;
       tr.children[2].textContent = t.y + '-' + two(t.mo) + '-' + two(t.d) + ' ' + two(t.h) + ':' + two(t.mi) + ':' + two(t.s) + ' UVT';
@@ -190,7 +192,16 @@
       show('done');
       ccToast('Contract scheduled');
     };
-    window.scModifyRow = function(){ ccMock('Mockup: modify or cancel this scheduled contract. Flow to come.'); };
+    window.scModifyRow = function(){ ccMock('Mockup: modify this scheduled contract. Flow to come.'); };
+    /* Cancel under the status (Jeff 10-08): confirm, then the row reads Canceled */
+    window.scCancelRow = function(btn, name){
+      ccConfirm('Cancel ' + name + '?', 'Cancel Contract', function(){
+        var stack = btn.closest('.st-stack');
+        stack.querySelector('.status-pill').textContent = 'Canceled';
+        stack.querySelector('.row-acts').remove();
+        ccToast('Mockup: ' + name + ' canceled');
+      });
+    };
     /* Schedule again: copy everything from a past contract except the trigger time */
     window.scAgain = function(name){
       var k = KNOWN[name]; if(!k) return;

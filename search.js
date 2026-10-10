@@ -64,29 +64,43 @@
   function rowHtml(r, i){
     var detail = r.detail || (r.short + ' · ' + r.name);
     var block = r.block ? '#' + r.block.toLocaleString() : 'scheduled';
-    /* contract rows: the When cell is a print-proof action (Jeff round 5, item 7);
-       pending contracts get Edit (placeholder until the modify/cancel flow is defined),
-       executed ones get Schedule again (Jeff 09-24) */
-    var when = r.when;
-    if(r.cat === 'contract'){
-      when = '<span class="row-acts"><button class="kv-copy" type="button" onclick="CCSearch.cert(' + i + ',true)">Print proof</button>';
-      if(r.status === 'Scheduled' && r.userId === ME)
-        when += '<button class="kv-copy" type="button" onclick="ccMock(\'Mockup: edit this scheduled contract (reschedule or cancel). Flow to come.\')">Edit</button>';
-      if(r.status === 'Executed' && r.userId === ME)
-        when += '<a class="kv-copy" style="text-decoration:none;" href="contracts.html?again=' + encodeURIComponent(r.cname) + '">Schedule again</a>';
-      when += '</span>';
+    var t = timeOf(r), made = created(r);
+    /* your own contracts carry their actions under the status (Jeff 10-08): scheduled ones
+       Edit (placeholder until that flow is defined) and Cancel, executed ones Schedule Again */
+    var acts = '';
+    if(r.cat === 'contract' && r.userId === ME){
+      if(r.status === 'Scheduled')
+        acts = '<button class="kv-copy" type="button" onclick="ccMock(\'Mockup: edit this scheduled contract. Flow to come.\')">Edit</button>'
+          + '<button class="kv-copy" type="button" onclick="CCSearch.cancel(' + i + ')">Cancel</button>';
+      if(r.status === 'Executed')
+        acts = '<a class="kv-copy" style="text-decoration:none;" href="contracts.html?again=' + encodeURIComponent(r.cname) + '">Schedule Again</a>';
     }
-    /* the whole row opens the panel (Jeff 10-07); the arrow stays as the cue and keyboard target */
-    return '<tr class="xr" onclick="CCSearch.rowClick(event,' + i + ',this)"><td>' + r.type + '</td><td class="mono">' + detail + '</td><td class="mono">' + block
-      + (btOn() ? '</td><td class="mono">' + stamp(r) : '')
-      + '</td><td><span class="status-pill">' + r.status + '</span></td><td>' + when
-      + '</td><td style="text-align:right;"><button class="xbtn" type="button" aria-label="Expand">' + chev() + '</button></td></tr>';
+    /* the whole row opens the panel (Jeff 10-07); the arrow stays as the cue and keyboard target.
+       data-v carries what each column sorts by */
+    return '<tr class="xr" onclick="CCSearch.rowClick(event,' + i + ',this)"><td>' + r.type + '</td><td class="mono">' + detail + '</td>'
+      + '<td class="mono" data-v="' + (r.block || '') + '">' + block + '</td>'
+      + '<td class="mono" data-v="' + (t ? t.ms : '') + '">' + (t ? cellTime(t.ms) : '—') + '</td>'
+      + '<td data-v="' + r.status + '"><div class="st-stack"><span class="status-pill">' + r.status + '</span>' + (acts ? '<span class="row-acts">' + acts + '</span>' : '') + '</div></td>'
+      + '<td class="mono" data-v="' + made + '">' + cellTime(made) + '</td>'
+      + '<td><button class="kv-copy" type="button" onclick="CCSearch.cert(' + i + ',false)" aria-label="Open the proof certificate">.pdf</button></td>'
+      + '<td style="text-align:right;"><button class="xbtn" type="button" aria-label="Expand">' + chev() + '</button></td></tr>';
   }
-  function btOn(){
-    var b = document.getElementById('sv-bt');
-    return !!(b && b.checked);
+  var COLS = 8;
+  /* narrow tables break a time between its date and clock, never inside them */
+  function cellTime(ms){
+    var p = fmt(new Date(ms)).split(' ');
+    return '<span class="nw">' + p[0] + '</span> <span class="nw">' + p[1] + '</span>';
   }
-  function cols(){ return btOn() ? 7 : 6; }
+  /* mock "now" for the canned rows: the newest log ("2 min ago") anchored 02:12 */
+  var NOW = Date.UTC(2026, 6, 3, 2, 14, 0);
+  /* when the entry was made: logs and API calls at their anchor, contracts when they were
+     scheduled (the mock clock less their age, seconds seeded per record) */
+  function created(r){
+    if(r.cat !== 'contract'){ var t = timeOf(r); return t ? t.ms : NOW; }
+    var m = /(\d+)\s*(min|h|d)/.exec(r.when || ''), unit = { min: 6e4, h: 36e5, d: 864e5 };
+    var back = m ? +m[1] * unit[m[2]] : /yesterday/.test(r.when || '') ? 864e5 : 0;
+    return NOW - back + (seedOf(r.key + 'c') % 60) * 1000;
+  }
   /* time the record hit the chain, to the second; scheduled contracts show their trigger.
      Fresh logs carry minutes only, so their seconds come from the key (stable per record). */
   function timeOf(r){
@@ -104,10 +118,6 @@
   function consensus(r){
     var t = r.cat !== 'contract' && timeOf(r);
     return t ? fmt(new Date(t.ms)) + ' ' + t.label : r.anchored;
-  }
-  function stamp(r){
-    var t = timeOf(r);
-    return t ? fmt(new Date(t.ms)) : '—';
   }
   function esc(s){
     return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -142,11 +152,11 @@
   }
   function render(list, tbody){
     last = list;
-    var th = document.getElementById('sv-bt-th');
-    if(th) th.hidden = !btOn();
     tbody.innerHTML = list.length
       ? list.map(rowHtml).join('')
-      : '<tr><td colspan="' + cols() + '" class="empty">No matches on the chain for that query.</td></tr>';
+      : '<tr><td colspan="' + COLS + '" class="empty">No matches on the chain for that query.</td></tr>';
+    var table = tbody.closest('table');
+    if(table.ccResort) table.ccResort();
   }
   function norm(s){ return String(s || '').toLowerCase().trim(); }
   function linkFor(r){
@@ -164,9 +174,10 @@
   window.CCSearch = {
     rows: ROWS,
     render: render,
-    rerender: function(){ render(last, document.getElementById('sv-rows')); },
     catsOn: catsOn,
     timeOf: timeOf,
+    created: created,
+    now: NOW,
     consensus: consensus,
     seedOf: seedOf,
     linkFor: linkFor,
@@ -176,13 +187,21 @@
       if(String(window.getSelection && window.getSelection()).trim()) return;
       var btn = tr.querySelector('.xbtn');
       var next = tr.nextElementSibling;
-      if(next && next.classList.contains('xrow')){ next.remove(); btn.classList.remove('open'); return; }
+      if(next && next.classList.contains('xrow')){ next.remove(); btn.classList.remove('open'); tr.classList.remove('open'); return; }
       var open = tr.parentElement.querySelector('.xrow');
       if(open){ open.remove(); }
-      tr.parentElement.querySelectorAll('.xbtn.open').forEach(function(b){ b.classList.remove('open'); });
+      tr.parentElement.querySelectorAll('.open').forEach(function(b){ b.classList.remove('open'); });
       var x = document.createElement('tr'); x.className = 'xrow';
-      x.innerHTML = '<td colspan="' + cols() + '">' + panelHtml(last[i], i) + '</td>';
-      tr.after(x); btn.classList.add('open');
+      x.innerHTML = '<td colspan="' + COLS + '">' + panelHtml(last[i], i) + '</td>';
+      tr.after(x); btn.classList.add('open'); tr.classList.add('open');
+    },
+    cancel: function(i){
+      var r = last[i];
+      ccConfirm('Cancel ' + (r.cname || 'this contract') + '?', 'Cancel Contract', function(){
+        r.status = 'Canceled';
+        render(last, document.getElementById('sv-rows'));
+        ccToast('Mockup: ' + (r.cname || 'contract') + ' canceled');
+      });
     },
     copyLink: function(i){
       navigator.clipboard.writeText(linkFor(last[i]))

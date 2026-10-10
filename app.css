@@ -196,7 +196,7 @@ h1,h2,h3,h4{font-family:var(--f-display);font-weight:500;letter-spacing:-0.015em
   overflow:hidden;
 }
 .kv-v span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
-.kv-copy{flex:none;color:var(--fg-3);font-size:11px;padding:2px 8px;border:1px solid var(--line);border-radius:6px;}
+.kv-copy{flex:none;color:var(--fg-3);font-size:12px;padding:2px 8px;border:1px solid var(--line);border-radius:6px;}
 .kv-copy:hover{color:var(--accent);border-color:var(--accent-line);}
 
 /* tables */
@@ -316,9 +316,9 @@ h1,h2,h3,h4{font-family:var(--f-display);font-weight:500;letter-spacing:-0.015em
 /* ===== Docs ===== */
 .docs-layout{display:flex;gap:40px;align-items:flex-start;}
 .docs-toc{
-  position:sticky;top:76px;width:220px;flex:none;
+  position:sticky;top:calc(var(--tb-h,64px) + 12px);width:220px;flex:none;
   display:flex;flex-direction:column;gap:2px;
-  max-height:calc(100vh - 100px);overflow-y:auto;padding-right:6px;
+  max-height:calc(100vh - var(--tb-h,64px) - 24px);overflow-y:auto;padding-right:6px;
 }
 .docs-toc-label{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-3);padding:14px 10px 6px;}
 .docs-toc a{
@@ -391,6 +391,7 @@ h1,h2,h3,h4{font-family:var(--f-display);font-weight:500;letter-spacing:-0.015em
 tr.xr{cursor:pointer;}
 tr.xr:hover>td{background:var(--surface-2);}
 tr.xrow>td{padding:4px 6px 12px;border-bottom:1px solid var(--line);}
+tr.xr.open>td{border-bottom-color:transparent;}
 .xpanel{background:var(--surface-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:14px 16px;}
 .xpanel.api{border-left-color:#5b8fc9;}
 .xpanel.contract{border-left-color:#c9a35b;}
@@ -418,8 +419,11 @@ tr.xrow>td{padding:4px 6px 12px;border-bottom:1px solid var(--line);}
 .tb-global{display:flex;gap:16px;align-items:center;margin-right:4px;}
 .tb-global a{font-size:12px;color:var(--fg-3);text-decoration:none;white-space:nowrap;transition:color .15s;}
 .tb-global a:hover{color:var(--fg);}
+.tb-stats{display:flex;align-items:center;gap:14px;}
+/* Jeff 10-08: below 1720px the time and block height drop to their own line under the
+   wallet instead of hiding (inline-size containment keeps them from widening line one) */
 @media (max-width:1720px){
-  .topbar .tb-stat{display:none;}
+  .tb-stats{order:9;flex:0 0 100%;justify-content:flex-end;flex-wrap:wrap;gap:8px;contain:inline-size;}
 }
 @media (max-width:760px){
   .table{display:block;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;}
@@ -512,7 +516,15 @@ tr.xrow>td{padding:4px 6px 12px;border-bottom:1px solid var(--line);}
 
 /* dashboard: three compact plan modules */
 .plan-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
-@media(max-width:1100px){.plan-grid{grid-template-columns:1fr;}}
+/* Jeff 10-08: stacked cards ran full width with a long gap between each value and its
+   button; two across at mid widths (an odd last card spans), one on phones, button by its value */
+@media(max-width:1100px){
+  .plan-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .plan-grid > :last-child:nth-child(odd){grid-column:1 / -1;}
+  .plan-grid > :last-child:nth-child(odd) .kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px;}
+  .plan-grid .kv-v span{flex:0 1 auto;}
+}
+@media(max-width:640px){.plan-grid{grid-template-columns:1fr;}.plan-grid > :last-child:nth-child(odd) .kv{display:flex;}}
 .plan-grid .card-head{flex-wrap:wrap;}
 
 /* page-top summary module (contracts credit, time services plan) */
@@ -538,7 +550,10 @@ tr.xrow>td{padding:4px 6px 12px;border-bottom:1px solid var(--line);}
 .sc-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;}
 .sc-done{margin-top:0;}
 .row-acts{display:flex;gap:6px;flex-wrap:wrap;}
-.acct-anchor{scroll-margin-top:84px;}
+/* status with its actions underneath (Jeff 10-08) */
+.st-stack{display:flex;flex-direction:column;align-items:flex-start;gap:7px;}
+.st-stack .row-acts{flex-wrap:nowrap;}
+.acct-anchor{scroll-margin-top:calc(var(--tb-h,64px) + 20px);}
 .acc-note{font-size:12.5px;color:var(--fg-3);margin:6px 0 16px;}
 @media(max-width:640px){.sc-time{gap:6px;}.sc-time label{font-size:9px;letter-spacing:0;}}
 
@@ -554,3 +569,24 @@ tr.xrow>td{padding:4px 6px 12px;border-bottom:1px solid var(--line);}
 .login-wallet .lw-tag{margin-left:auto;font-size:11px;font-weight:600;color:var(--fg-2);background:var(--surface-2);border:1px solid var(--line-2);border-radius:6px;padding:2px 7px;}
 .login-or{display:flex;align-items:center;gap:12px;margin:18px 0;font-size:12px;color:var(--fg-3);}
 .login-or::before,.login-or::after{content:"";flex:1;border-top:1px solid var(--line);}
+
+/* ===== Jeff 10-08 ===== */
+/* sortable headers */
+.th-sort{display:inline-flex;align-items:center;gap:5px;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;padding:0;border-radius:4px;}
+.th-sort:hover{color:var(--fg);}
+.th-sort:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.th-arr::after{content:'↕';opacity:.45;}
+th[aria-sort=ascending] .th-arr::after{content:'↑';opacity:1;color:var(--accent);}
+th[aria-sort=descending] .th-arr::after{content:'↓';opacity:1;color:var(--accent);}
+th[aria-sort=ascending] .th-sort,th[aria-sort=descending] .th-sort{color:var(--fg);}
+/* a button under a stat value (Logging: Buy More, Manage Plan) */
+.stat-act{margin-top:12px;}
+.stat-act[hidden]{display:none;}
+/* Billing & Usage links: one size, one case, a divider between neighbours */
+.lnk{color:var(--accent);font-family:var(--f-body);font-size:12px;font-weight:400;letter-spacing:0;text-transform:none;}
+.lnk:hover{text-decoration:underline;}
+.lnks{display:inline-flex;align-items:center;flex-wrap:wrap;gap:6px 14px;}
+.lnks .lnk + .lnk{padding-left:14px;border-left:1px solid var(--line-2);}
+.nw{white-space:nowrap;}
+/* eight Search columns: mid widths scroll sideways inside the card */
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}

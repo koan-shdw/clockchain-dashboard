@@ -104,8 +104,10 @@
       + '<div class="tb-right">'
       + '<nav class="tb-mobile-nav"><select onchange="location.href=this.value" aria-label="Navigate">' + opts + '</select></nav>'
       + glinks
+      + '<div class="tb-stats">'
       + '<span class="tb-stat"><span class="live-dot"></span><span class="tb-label">Clockchain Time</span><span id="tb-time">--:--:--</span></span>'
       + '<span class="tb-stat"><span class="tb-label">Clockchain Block Height</span><span id="tb-height">#—</span></span>'
+      + '</div>'
       + '<div class="tb-wallet" id="tb-wallet"></div>'
       + '<a class="tb-signout" href="' + base + 'login.html">Sign out</a>'
       + '<button class="tb-theme" id="tb-theme" type="button" aria-label="Toggle light mode" onclick="ccTheme()"></button>'
@@ -164,6 +166,61 @@
     var d = document.getElementById('cc-buy'); if(d) d.remove();
     ccToast('Mockup: purchase via ' + method);
   };
+  /* confirm card on the same overlay (Cancel contract, Jeff 10-08) */
+  window.ccConfirm = function(title, yes, onYes){
+    var old = document.getElementById('cc-buy'); if(old) old.remove();
+    var d = document.createElement('div'); d.id = 'cc-buy'; d.className = 'buy-overlay';
+    d.innerHTML = '<div class="buy-card" role="dialog" aria-modal="true"><h4></h4>'
+      + '<button class="btn btn-primary btn-sm" type="button">' + yes + '</button>'
+      + '<button class="kv-copy" type="button">Keep Contract</button></div>';
+    d.querySelector('h4').textContent = title;
+    var b = d.querySelectorAll('button');
+    b[0].onclick = function(){ d.remove(); onYes(); };
+    d.onclick = function(e){ if(e.target === d || e.target === b[1]) d.remove(); };
+    d.onkeydown = function(e){ if(e.key === 'Escape') d.remove(); };
+    document.body.appendChild(d);
+    b[0].focus();
+  };
+
+  /* ---- sortable tables (Jeff 10-08): <table data-sort="col,dir"> starts sorted there;
+     a header click sorts A→Z, the next Z→A. A cell's data-v sorts in place of its text,
+     empty values stay last, and an opened detail row (.xrow) moves with its row.
+     Headers marked data-nosort or left blank stay plain. ---- */
+  function cellV(tr, i){
+    var td = tr.cells[i];
+    return !td ? '' : td.hasAttribute('data-v') ? td.getAttribute('data-v') : td.textContent.trim();
+  }
+  function sortTable(table, col, dir){
+    table.ccSort = { col: col, dir: dir };
+    Array.prototype.forEach.call(table.tHead.rows[0].cells, function(th, i){
+      if(th.querySelector('.th-sort')) th.setAttribute('aria-sort', i !== col ? 'none' : dir === 1 ? 'ascending' : 'descending');
+    });
+    var body = table.tBodies[0], groups = [];
+    Array.prototype.forEach.call(body.rows, function(tr){
+      if(tr.classList.contains('xrow') && groups.length) groups[groups.length - 1].push(tr);
+      else groups.push([tr]);
+    });
+    groups.sort(function(a, b){
+      var x = cellV(a[0], col), y = cellV(b[0], col);
+      if(x === '' || y === '') return (x === '') - (y === '');
+      var nx = Number(x), ny = Number(y);
+      return dir * (isFinite(nx) && isFinite(ny) ? nx - ny : x.localeCompare(y, undefined, { numeric: true, sensitivity: 'base' }));
+    });
+    groups.forEach(function(g){ g.forEach(function(tr){ body.appendChild(tr); }); });
+  }
+  function initSort(table){
+    Array.prototype.forEach.call(table.tHead.rows[0].cells, function(th, i){
+      if(th.hasAttribute('data-nosort') || !th.textContent.trim()) return;
+      th.innerHTML = '<button class="th-sort" type="button">' + th.innerHTML + '<span class="th-arr" aria-hidden="true"></span></button>';
+      th.firstChild.onclick = function(){
+        var s = table.ccSort;
+        sortTable(table, i, s && s.col === i && s.dir === 1 ? -1 : 1);
+      };
+    });
+    table.ccResort = function(){ if(table.ccSort) sortTable(table, table.ccSort.col, table.ccSort.dir); };
+    var a = table.getAttribute('data-sort').split(',');
+    if(a[0] !== '') sortTable(table, +a[0], +a[1] || 1);
+  }
 
   /* ---- theme: dark default, light via [data-theme="light"] on <html> ---- */
   var SUN = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.5 4.5l2 2M17.5 17.5l2 2M19.5 4.5l-2 2M6.5 17.5l-2 2"/></svg>';
@@ -227,6 +284,12 @@
 
   renderSidebar();
   renderTopbar();
+  document.querySelectorAll('table[data-sort]').forEach(initSort);
+  /* the header grows when its stats wrap (Jeff 10-08); anchors and the docs menu sit below it */
+  var tb = document.getElementById('topbar');
+  function tbH(){ if(tb) document.documentElement.style.setProperty('--tb-h', tb.offsetHeight + 'px'); }
+  tbH();
+  if(tb && window.ResizeObserver) new ResizeObserver(tbH).observe(tb);
   paintWallet();
   paintTheme();
   if(location.hash){ var jump = document.getElementById(location.hash.slice(1)); if(jump) jump.scrollIntoView(); }
